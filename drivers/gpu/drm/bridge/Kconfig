@@ -1,0 +1,31 @@
+# SPDX-License-Identifier: GPL-2.0-only
+config DRM_BRIDGE
+	def_bool y
+	depends on DRM
+	help
+	  Bridge registration and lookup framework.
+
+config DRM_PANEL_BRIDGE
+	def_bool y
+	depends on DRM_BRIDGE
+	select DRM_PANEL
+	help
+	  DRM bridge wrapper of DRM panels
+
+menu "Display Interface Bridges"
+	depends on DRM && DRM_BRIDGE
+
+config DRM_DISPLAY_CONNECTOR
+	tristate "Display connector support"
+	depends on OF
+	help
+	  Driver for display connectors with support for DDC and hot-plug
+	  detection. Most display controllers handle display connectors
+	  internally and don't need this driver, but the DRM subsystem is
+	  moving towards separating connector handling from display controllers
+	  on ARM-based platforms. Saying Y here when this driver is not needed
+	  will not cause any issue.
+
+source "drivers/gpu/drm/bridge/synopsys/Kconfig"
+
+endmenu

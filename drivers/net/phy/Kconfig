@@ -1,0 +1,76 @@
+# SPDX-License-Identifier: GPL-2.0-only
+#
+# PHY Layer Configuration
+#
+
+config PHYLINK
+	tristate
+	depends on NETDEVICES
+	select PHYLIB
+	select SWPHY
+	help
+	  PHYlink models the link between the PHY and MAC, allowing fixed
+	  configuration links, PHYs, and Serdes links with MAC level
+	  autonegotiation modes.
+
+menuconfig PHYLIB
+	tristate "PHY Device support and infrastructure"
+	depends on NETDEVICES
+	select MDIO_DEVICE
+	select MDIO_DEVRES
+	help
+	  Ethernet controllers are usually attached to PHY
+	  devices.  This option provides infrastructure for
+	  managing PHY devices.
+
+if PHYLIB
+
+config SWPHY
+	bool
+
+config LED_TRIGGER_PHY
+	bool "Support LED triggers for tracking link state"
+	depends on LEDS_TRIGGERS
+	help
+	  Adds support for a set of LED trigger events per-PHY.  Link
+	  state change will trigger the events, for consumption by an
+	  LED class driver.  There are triggers for each link speed currently
+	  supported by the PHY and also a one common "link" trigger as a
+	  logical-or of all the link speed ones.
+	  All these triggers are named according to the following pattern:
+	      <mii bus id>:<phy>:<speed>
+
+	  Where speed is in the form:
+		<Speed in megabits>Mbps OR <Speed in gigabits>Gbps OR link
+		for any speed known to the PHY.
+
+config SFP
+	tristate "SFP cage support"
+	depends on I2C && PHYLINK
+	depends on HWMON || HWMON=n
+	select MDIO_I2C
+
+comment "MII PHY device drivers"
+
+config MOTORCOMM_PHY
+	tristate "Motorcomm PHYs"
+	help
+	  Enables support for Motorcomm network PHYs.
+	  Currently supports the YT8511 gigabit PHY.
+
+config QSEMI_PHY
+	tristate "Quality Semiconductor PHYs"
+	help
+	  Currently supports the qs6612
+
+config TERANETICS_PHY
+	tristate "Teranetics PHYs"
+	help
+	  Currently supports the Teranetics TN2020
+
+config VITESSE_PHY
+	tristate "Vitesse PHYs"
+	help
+	  Currently supports the vsc8244
+
+endif # PHYLIB
